@@ -28,4 +28,8 @@ class User extends Model
         'email',
         'password'
     ];
+
+    protected $casts = [
+        'password' => 'hashed'
+    ];
 }

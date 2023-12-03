@@ -17,7 +17,7 @@ class CardController extends Controller
         if ($card->count() > 0)
             return $card;
         else
-            return response()->json(['message' => "No cards"], 404);
+            return response()->json(['data' => "No cards"], 404);
     }
 
     /**
@@ -43,7 +43,7 @@ class CardController extends Controller
     {
         $card = Card::where("id_card", $id)->first();
         if (!$card) {
-            return response()->json(['message' => "No such card"], 404);
+            return response()->json(['data' => "No such card"], 404);
         }
         return CardResource::make($card);
     }
@@ -62,8 +62,11 @@ class CardController extends Controller
     public function update(CardStoreRequest $request, string $id)
     {
         $card = Card::where("id_card", $id)->first();
-        $card->update($request->validated());
-        return CardResource::make($card);
+        if ($card) {
+            $card->update($request->validated());
+            return CardResource::make($card);
+        }
+        return response()->json(['data' => "No such card"], 404);
     }
 
     /**
@@ -74,8 +77,8 @@ class CardController extends Controller
         $card = Card::where("id_card", $id)->first();
         if ($card) {
             $card->delete();
-            return response()->json(['message' => "Card successfully deleted"], 204);
+            return response()->json(['data' => "Card successfully deleted"], 204);
         }
-        return response()->json(['message' => "No such card"], 404);
+        return response()->json(['data' => "No such card"], 404);
     }
 }

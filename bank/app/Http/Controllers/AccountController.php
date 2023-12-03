@@ -18,7 +18,7 @@ class AccountController extends Controller
         if ($account->count() > 0)
             return $account;
         else
-            return response()->json(['message' => "No accounts"], 404);
+            return response()->json(['data' => "No accounts"], 404);
     }
 
     /**
@@ -44,7 +44,7 @@ class AccountController extends Controller
     {
         $account = Account::where("id_account", $id)->first();
         if (!$account) {
-            return response()->json(['message' => "No such account"], 404);
+            return response()->json(['data' => "No such account"], 404);
         }
         return AccountResource::make($account);
     }
@@ -63,8 +63,11 @@ class AccountController extends Controller
     public function update(AccountStoreRequest $request, string $id)
     {
         $account = Account::where("id_account", $id)->first();
-        $account->update($request->validated());
-        return AccountResource::make($account);
+        if ($account) {
+            $account->update($request->validated());
+            return AccountResource::make($$account);
+        }
+        return response()->json(['data' => "No such account"], 404);
     }
 
     /**
@@ -75,8 +78,8 @@ class AccountController extends Controller
         $account = Account::where("id_account", $id)->first();
         if ($account) {
             $account->delete();
-            return response()->json(['message' => "Account successfully deleted"], 204);
+            return response()->json(['data' => "Account successfully deleted"], 204);
         }
-        return response()->json(['message' => "No such account"], 404);
+        return response()->json(['data' => "No such account"], 404);
     }
 }

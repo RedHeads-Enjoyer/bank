@@ -18,7 +18,7 @@ class CurrencyController extends Controller
         if ($currency->count() > 0)
             return $currency;
         else
-            return response()->json(['message' => "No currencies"], 404);
+            return response()->json(['data' => "No currencies"], 404);
     }
 
     /**
@@ -44,7 +44,7 @@ class CurrencyController extends Controller
     {
         $currency = Currency::where("id_currency", $id)->first();
         if (!$currency) {
-            return response()->json(['message' => "No such currency"], 404);
+            return response()->json(['data' => "No such currency"], 404);
         }
         return CurrencyResource::make($currency);
     }
@@ -63,8 +63,11 @@ class CurrencyController extends Controller
     public function update(OperaionStoreRequestAlias $request, string $id)
     {
         $currency = Currency::where("id_currency", $id)->first();
-        $currency->update($request->validated());
-        return CurrencyResource::make($currency);
+        if ($currency) {
+            $currency->update($request->validated());
+            return CurrencyResource::make($currency);
+        }
+        return response()->json(['data' => "No such deleted"], 404);
     }
 
     /**
@@ -75,8 +78,8 @@ class CurrencyController extends Controller
         $currency = Currency::where("id_currency", $id)->first();
         if ($currency) {
             $currency->delete();
-            return response()->json(['message' => "Currency successfully deleted"], 204);
+            return response()->json(['data' => "Currency successfully deleted"], 204);
         }
-        return response()->json(['message' => "No such currency"], 404);
+        return response()->json(['data' => "No such currency"], 404);
     }
 }

@@ -17,7 +17,7 @@ class OperationController extends Controller
         if ($operation->count() > 0)
             return $operation;
         else
-            return response()->json(['message' => "No operations"], 404);
+            return response()->json(['data' => "No operations"], 404);
     }
 
     /**
@@ -43,7 +43,7 @@ class OperationController extends Controller
     {
         $operation = Operation::where("id_operation", $id)->first();
         if (!$operation) {
-            return response()->json(['message' => "No such operation"], 404);
+            return response()->json(['data' => "No such operation"], 404);
         }
         return OperationResource::make($operation);
     }
@@ -62,8 +62,11 @@ class OperationController extends Controller
     public function update(OperaionStoreRequest $request, string $id)
     {
         $operation = Operation::where("id_operation", $id)->first();
-        $operation->update($request->validated());
-        return OperationResource::make($operation);
+        if ($operation) {
+            $operation->update($request->validated());
+            return OperationResource::make($operation);
+        }
+        return response()->json(['data' => "No such operation"], 404);
     }
 
     /**
@@ -74,8 +77,8 @@ class OperationController extends Controller
         $operation = Operation::where("id_operation", $id)->first();
         if ($operation) {
             $operation->delete();
-            return response()->json(['message' => "Operation successfully deleted"], 204);
+            return response()->json(['data' => "Operation successfully deleted"], 204);
         }
-        return response()->json(['message' => "No such operation"], 404);
+        return response()->json(['data' => "No such operation"], 404);
     }
 }

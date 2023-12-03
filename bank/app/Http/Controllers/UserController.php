@@ -18,7 +18,7 @@ class UserController extends Controller
         if ($user->count() > 0)
             return $user;
         else
-            return response()->json(['message' => "No users"], 404);
+            return response()->json(['data' => "No users"], 404);
     }
 
     /**
@@ -44,7 +44,7 @@ class UserController extends Controller
     {
         $user = User::where("id_user", $id)->first();
         if (!$user) {
-            return response()->json(['message' => "No such user"], 404);
+            return response()->json(['data' => "No such user"], 404);
         }
         return UserResource::make($user);
     }
@@ -63,8 +63,11 @@ class UserController extends Controller
     public function update(UserStoreRequest $request, string $id)
     {
         $user = User::where("id_user", $id)->first();
-        $user->update($request->validated());
-        return UserResource::make($user);
+        if ($user) {
+            $user->update($request->validated());
+            return UserResource::make($user);
+        }
+        return response()->json(['data' => "No such user"], 404);
     }
 
     /**
@@ -75,8 +78,8 @@ class UserController extends Controller
         $user = User::where("id_user", $id)->first();
         if ($user) {
             $user->delete();
-            return response()->json(['message' => "User successfully deleted"], 204);
+            return response()->json(['data' => "User successfully deleted"], 200);
         }
-        return response()->json(['message' => "No such user"], 404);
+        return response()->json(['data' => "No such user"], 404);
     }
 }
