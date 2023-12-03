@@ -9,7 +9,7 @@ class Operation extends Model
 {
     use HasFactory;
 
-    protected $table = 'operation';
+    protected $table = 'operations';
     public $timestamps = false;
     protected $primaryKey = "id_operation";
 
@@ -17,6 +17,6 @@ class Operation extends Model
         'id_operation ',
         'delta',
         'date',
-        'id_account '
+        'id_account'
     ];
 }

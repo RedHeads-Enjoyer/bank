@@ -65,7 +65,7 @@ class AccountController extends Controller
         $account = Account::where("id_account", $id)->first();
         if ($account) {
             $account->update($request->validated());
-            return AccountResource::make($$account);
+            return AccountResource::make($account);
         }
         return response()->json(['data' => "No such account"], 404);
     }
@@ -78,7 +78,7 @@ class AccountController extends Controller
         $account = Account::where("id_account", $id)->first();
         if ($account) {
             $account->delete();
-            return response()->json(['data' => "Account successfully deleted"], 204);
+            return response()->json(['data' => "Account successfully deleted"], 200);
         }
         return response()->json(['data' => "No such account"], 404);
     }

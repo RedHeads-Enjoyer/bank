@@ -11,7 +11,7 @@ class CurrencyStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,15 +23,13 @@ class CurrencyStoreRequest extends FormRequest
     {
         if (request()->isMethod('post')) {
             return [
-                'id_currency' => 'required|int',
                 'title' => 'required|string',
-                'rate' => 'required|double',
+                'rate' => 'required|numeric',
             ];
         } else {
             return [
-                'id_currency' => 'nullable|int',
                 'title' => 'nullable|string',
-                'rate' => 'nullable|double',
+                'rate' => 'nullable|numeric',
             ];
         }
     }

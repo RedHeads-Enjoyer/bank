@@ -23,15 +23,15 @@ class CardStoreRequest extends FormRequest
     {
         if (request()->isMethod('post')) {
             return [
-                'number' => 'required|int|min:1000000000000000|max:9999999999999999',
-                'cvc' => 'required|int|max:999|min:100',
-                'id_account' => 'required|int',
+                'number' => 'required|string|regex:/^[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$/',
+                'cvc' => 'required|string|regex:/^\d{3}$/',
+                'id_account' => 'exists:accounts,id_account|required|int',
             ];
         } else {
             return [
-                'number' => 'nullable|int|min:1000000000000000|max:9999999999999999',
-                'cvc' => 'nullable|int|max:999|min:100',
-                'id_account' => 'nullable|int',
+                'number' => 'nullable|string|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
+                'cvc' => 'nullable|string|regex:/^\d{3}$/',
+                'id_account' => 'exists:accounts,id_account|nullable|int',
             ];
         }
     }

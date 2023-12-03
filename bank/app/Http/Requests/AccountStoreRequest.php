@@ -23,17 +23,15 @@ class AccountStoreRequest extends FormRequest
     {
         if (request()->isMethod('post')) {
             return [
-                'id_account' => 'required|int',
-                'id_user' => 'required|date',
-                'id_currency' => 'required|int',
-                'balance' => 'required|int'
+                'id_user' => 'exists:users,id_user|required|int',
+                'id_currency' => 'exists:currencies,id_currency|required|int',
+                'balance' => 'required|numeric'
             ];
         } else {
             return [
-                'id_account' => 'nullable|int',
-                'id_user' => 'nullable|date',
-                'id_currency' => 'nullable|int',
-                'balance' => 'nullable|int'
+                'id_user' => 'exists:users,id_user|nullable|int',
+                'id_currency' => 'exists:currencies,id_currency|nullable|int',
+                'balance' => 'nullable|numeric'
             ];
         }
     }

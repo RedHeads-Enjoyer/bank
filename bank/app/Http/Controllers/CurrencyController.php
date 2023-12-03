@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\OperaionStoreRequest as OperaionStoreRequestAlias;
+use App\Http\Requests\CurrencyStoreRequest;
 use App\Http\Resources\CurrencyResource;
 use App\Models\Currency;
 
@@ -32,7 +32,7 @@ class CurrencyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(OperaionStoreRequestAlias $request)
+    public function store(CurrencyStoreRequest $request)
     {
         return Currency::create($request->validated());
     }
@@ -60,7 +60,7 @@ class CurrencyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(OperaionStoreRequestAlias $request, string $id)
+    public function update(CurrencyStoreRequest $request, string $id)
     {
         $currency = Currency::where("id_currency", $id)->first();
         if ($currency) {
@@ -78,7 +78,7 @@ class CurrencyController extends Controller
         $currency = Currency::where("id_currency", $id)->first();
         if ($currency) {
             $currency->delete();
-            return response()->json(['data' => "Currency successfully deleted"], 204);
+            return response()->json(['data' => "Currency successfully deleted"], 200);
         }
         return response()->json(['data' => "No such currency"], 404);
     }

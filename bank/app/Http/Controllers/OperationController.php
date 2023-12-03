@@ -33,7 +33,9 @@ class OperationController extends Controller
      */
     public function store(OperaionStoreRequest $request)
     {
-        return Operation::create($request->validated());
+        $validatedData = $request->validated();
+        $validatedData['date'] = now()->format('Y-m-d H:i:s');
+        return Operation::create($validatedData);
     }
 
     /**

@@ -9,7 +9,7 @@ class Currency extends Model
 {
     use HasFactory;
 
-    protected $table = 'currency';
+    protected $table = 'currencies';
     public $timestamps = false;
     protected $primaryKey = "id_currency";
 
