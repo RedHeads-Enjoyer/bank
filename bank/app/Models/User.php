@@ -9,8 +9,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Model
+class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -32,4 +33,18 @@ class User extends Model
     protected $casts = [
         'password' => 'hashed'
     ];
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [
+            'name' => $this->name,
+            'role' => $this->role,
+            'id' => $this->id
+        ];
+    }
 }

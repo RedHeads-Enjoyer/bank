@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\API\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,5 +26,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function (){
     Route::apiResource('operations', OperationController::class);
     Route::apiResource('currency', CurrencyController::class);
     Route::apiResource('accounts', AccountController::class);
+});
+
+Route::prefix('auth')->middleware('api')->controller(AuthController::class)->group(function () {
+   Route::post('login', 'login');
+   Route::get('user', 'user');
+   Route::post('logout', 'logout');
+   Route::post('refresh', 'refresh');
 });
 
