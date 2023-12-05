@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OperaionStoreRequest;
 use App\Http\Resources\OperationResource;
+use App\Models\Account;
 use App\Models\Operation;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -33,6 +34,13 @@ class OperationController extends Controller
     public function show(string $id)
     {
         $operation = Operation::where("id_operation", $id)->first();
+        $account = Account::where($operation->id_accaunt, $id)->first();
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1 && $account->id_user != $user->id_user) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         if (!$operation) {
             return response()->json(['data' => "No such operation"], 404);
         }
@@ -41,6 +49,11 @@ class OperationController extends Controller
 
     public function update(OperaionStoreRequest $request, string $id)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         $operation = Operation::where("id_operation", $id)->first();
         if ($operation) {
             $operation->update($request->validated());
@@ -51,6 +64,11 @@ class OperationController extends Controller
 
     public function destroy(string $id)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         $operation = Operation::where("id_operation", $id)->first();
         if ($operation) {
             $operation->delete();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CardStoreRequest;
 use App\Http\Resources\CardResource;
+use App\Models\Account;
 use App\Models\Card;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -31,6 +32,12 @@ class CardController extends Controller
     public function show(string $id)
     {
         $card = Card::where("id_card", $id)->first();
+        $account = Account::where($card->id_accaunt, $id)->first();
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1 && $account->id_user != $user->id_user) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
 
         if (!$card) {
             return response()->json(['data' => "No such card"], 404);
@@ -40,11 +47,14 @@ class CardController extends Controller
 
     public function update(CardStoreRequest $request, string $id)
     {
+        $card = Card::where("id_card", $id)->first();
+        $account = Account::where($card->id_accaunt, $id)->first();
+
         $user = JWTAuth::parseToken()->authenticate();
-        if ($user->role != 1) {
+        if ($user->role != 1 && $account->id_user != $user->id_user) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
-        $card = Card::where("id_card", $id)->first();
+
         if ($card) {
             $card->update($request->validated());
             return CardResource::make($card);
@@ -54,11 +64,14 @@ class CardController extends Controller
 
     public function destroy(string $id)
     {
+        $card = Card::where("id_card", $id)->first();
+        $account = Account::where($card->id_accaunt, $id)->first();
+
         $user = JWTAuth::parseToken()->authenticate();
-        if ($user->role != 1) {
+        if ($user->role != 1 && $account->id_user != $user->id_user) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
-        $card = Card::where("id_card", $id)->first();
+
         if ($card) {
             $card->delete();
             return response()->json(['data' => "Card successfully deleted"], 204);
