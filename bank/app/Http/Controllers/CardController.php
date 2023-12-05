@@ -11,6 +11,11 @@ class CardController extends Controller
 {
     public function index()
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         $card = CardResource::collection(Card::all());
         if ($card->count() > 0)
             return $card;

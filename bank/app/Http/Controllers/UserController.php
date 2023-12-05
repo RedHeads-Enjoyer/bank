@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\API\AuthController;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Mockery\Exception;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use GuzzleHttp\Client;
 
 class UserController extends Controller
 {
@@ -36,12 +31,13 @@ class UserController extends Controller
 
     public function show(string $id)
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        if ($user->role != 1) {
+        $current_user = JWTAuth::parseToken()->authenticate();
+        if (($current_user->role != 1 && $current_user->id_user != intval($id))) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
 
         $user = User::where("id_user", $id)->first();
+
         if (!$user) {
             return response()->json(['data' => "No such user"], 404);
         }

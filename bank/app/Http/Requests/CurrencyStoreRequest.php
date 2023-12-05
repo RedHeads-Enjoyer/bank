@@ -23,12 +23,12 @@ class CurrencyStoreRequest extends FormRequest
     {
         if (request()->isMethod('post')) {
             return [
-                'title' => 'required|string',
+                'title' => 'unique:currencies,title|required|string',
                 'rate' => 'required|numeric',
             ];
         } else {
             return [
-                'title' => 'nullable|string',
+                'title' => 'unique:currencies,title|nullable|string',
                 'rate' => 'nullable|numeric',
             ];
         }

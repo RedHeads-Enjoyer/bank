@@ -24,27 +24,18 @@ class AccountController extends Controller
             return response()->json(['data' => "No accounts"], 404);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(AccountStoreRequest $request)
     {
         return Account::create($request->validated());
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         $account = Account::where("id_account", $id)->first();
         if (!$account) {
             return response()->json(['data' => "No such account"], 404);
