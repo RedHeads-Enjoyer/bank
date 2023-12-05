@@ -23,13 +23,13 @@ class CardStoreRequest extends FormRequest
     {
         if (request()->isMethod('post')) {
             return [
-                'number' => 'required|string|regex:/^[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$/',
+                'number' => 'unique:cards,number|required|string|regex:/^[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$/',
                 'cvc' => 'required|string|regex:/^\d{3}$/',
                 'id_account' => 'exists:accounts,id_account|required|int',
             ];
         } else {
             return [
-                'number' => 'nullable|string|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
+                'number' => 'unique:cards,number|nullable|string|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
                 'cvc' => 'nullable|string|regex:/^\d{3}$/',
                 'id_account' => 'exists:accounts,id_account|nullable|int',
             ];

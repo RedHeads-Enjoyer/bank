@@ -27,7 +27,7 @@ class UserStoreRequest extends FormRequest
                 'middle_name' => 'nullable|string',
                 'last_name' => 'required|string',
                 'role' => 'required|int|max:2',
-                'phone' => 'required|string',
+                'phone' => 'unique:users,phone|required|string',
                 'email' => 'unique:users,email|required|string',
                 'password' => 'required|string',
             ];
@@ -37,8 +37,8 @@ class UserStoreRequest extends FormRequest
                 'middle_name' => 'nullable|string',
                 'last_name' => 'nullable|string',
                 'role' => 'nullable|int',
-                'phone' => 'nullable|string',
-                'email' => 'nullable|string',
+                'phone' => 'unique:users,phone|nullable|string',
+                'email' => 'unique:users,email|nullable|string',
                 'password' => 'nullable|string',
             ];
         }

@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CardStoreRequest;
 use App\Http\Resources\CardResource;
 use App\Models\Card;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class CardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $card = CardResource::collection(Card::all());
@@ -20,47 +18,27 @@ class CardController extends Controller
             return response()->json(['data' => "No cards"], 404);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(CardStoreRequest $request)
     {
         return Card::create($request->validated());
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $card = Card::where("id_card", $id)->first();
+
         if (!$card) {
             return response()->json(['data' => "No such card"], 404);
         }
         return CardResource::make($card);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(CardStoreRequest $request, string $id)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
         $card = Card::where("id_card", $id)->first();
         if ($card) {
             $card->update($request->validated());
@@ -69,11 +47,12 @@ class CardController extends Controller
         return response()->json(['data' => "No such card"], 404);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
         $card = Card::where("id_card", $id)->first();
         if ($card) {
             $card->delete();

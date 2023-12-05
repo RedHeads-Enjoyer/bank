@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+    font-family: Arial;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+main {
+    padding: 40px 100px;
+}
+
+.form__wrapper form {
+    width: fit-content;
+}
+
+.form__wrapper {
+    display: flex;
+    justify-content: space-around;
+}

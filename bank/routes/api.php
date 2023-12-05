@@ -29,9 +29,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function (){
 });
 
 Route::prefix('auth')->middleware('api')->controller(AuthController::class)->group(function () {
-   Route::post('login', 'login');
-   Route::get('user', 'user');
-   Route::post('logout', 'logout');
-   Route::post('refresh', 'refresh');
+    Route::post('login', 'login');
+    Route::get('user', 'user');
+    Route::post('logout', 'logout');
+    Route::post('refresh', 'refresh');
 });
+
 

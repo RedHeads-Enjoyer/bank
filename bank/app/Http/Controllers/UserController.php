@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\API\AuthController;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Mockery\Exception;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use GuzzleHttp\Client;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         $user = UserResource::collection(User::all());
         if ($user->count() > 0)
             return $user;
@@ -22,39 +28,16 @@ class UserController extends Controller
             return response()->json(['data' => "No users"], 404);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(UserStoreRequest $request)
     {
         return User::create($request->validated());
     }
 
-    /**
-     * Display the specified resource.
-     */
-//    public function show(string $id)
-//    {
-//
-//        $user = User::where("id_user", $id)->first();
-//        if (!$user) {
-//            return response()->json(['data' => "No such user"], 404);
-//        }
-//        return UserResource::make($user);
-//    }
-
     public function show(string $id)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if ($user->role == 0) {
+        if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
 
@@ -65,19 +48,13 @@ class UserController extends Controller
         return UserResource::make($user);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UserStoreRequest $request, string $id)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->id_user != $id && $user->role != 1) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         $user = User::where("id_user", $id)->first();
         if ($user) {
             $user->update($request->validated());
@@ -86,9 +63,6 @@ class UserController extends Controller
         return response()->json(['data' => "No such user"], 404);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $user = User::where("id_user", $id)->first();

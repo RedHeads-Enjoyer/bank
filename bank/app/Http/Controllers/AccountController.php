@@ -5,15 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AccountStoreRequest;
 use App\Http\Resources\AccountResource;
 use App\Models\Account;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 class AccountController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         $account = AccountResource::collection(Account::all());
         if ($account->count() > 0)
             return $account;
