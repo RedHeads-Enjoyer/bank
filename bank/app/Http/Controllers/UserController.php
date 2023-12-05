@@ -61,6 +61,11 @@ class UserController extends Controller
 
     public function destroy(string $id)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         $user = User::where("id_user", $id)->first();
         if ($user) {
             $user->delete();

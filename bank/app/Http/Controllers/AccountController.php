@@ -31,32 +31,28 @@ class AccountController extends Controller
 
     public function show(string $id)
     {
+        $account = Account::where("id_account", $id)->first();
+
         $user = JWTAuth::parseToken()->authenticate();
-        if ($user->role != 1) {
+        if ($user->role != 1 && $account->id_user != $user->id_user) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
 
-        $account = Account::where("id_account", $id)->first();
         if (!$account) {
             return response()->json(['data' => "No such account"], 404);
         }
         return AccountResource::make($account);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(AccountStoreRequest $request, string $id)
     {
         $account = Account::where("id_account", $id)->first();
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1 && $account->id_user != $user->id_user) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         if ($account) {
             $account->update($request->validated());
             return AccountResource::make($account);
@@ -64,12 +60,15 @@ class AccountController extends Controller
         return response()->json(['data' => "No such account"], 404);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $account = Account::where("id_account", $id)->first();
+
+        $user = JWTAuth::parseToken()->authenticate();
+        if ($user->role != 1 && $account->id_user != $user->id_user) {
+            return response()->json(['data' => "You dont have permissions"], 403);
+        }
+
         if ($account) {
             $account->delete();
             return response()->json(['data' => "Account successfully deleted"], 200);
