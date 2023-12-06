@@ -37,7 +37,7 @@ class OperationController extends Controller
         $account = Account::where("id_account", $validatedData['id_account'])->first();
 
         if ($account && $account->id_user == $user->id_user) {
-            $delta = -1 * intval($validatedData['delta']);
+            $delta = -1 * floatval($validatedData['delta']);
             if ($account->balance - $delta < 0) {
                 return response()->json(['data' => "You dont have enough money"], 403);
             }

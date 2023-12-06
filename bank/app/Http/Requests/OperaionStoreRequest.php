@@ -23,12 +23,12 @@ class OperaionStoreRequest extends FormRequest
     {
         if (request()->isMethod('post')) {
             return [
-                'delta' => 'required|int',
+                'delta' => 'required|numeric',
                 'id_account' => 'exists:accounts,id_account|required|int',
             ];
         } else {
             return [
-                'delta' => 'nullable|int',
+                'delta' => 'nullable|numeric',
                 'id_account' => 'exists:accounts,id_account|nullable|int',
             ];
         }

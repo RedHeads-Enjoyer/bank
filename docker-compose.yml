@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+    # Сервис для PHP, Apache и Laravel
+    app:
+        build:
+            context: bank
+            dockerfile: Dockerfile
+        ports:
+            - "8000:80"
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - mysql
+
+    # Сервис для MySQL
+    mysql:
+        image: mysql:5.7
+        environment:
+            MYSQL_DATABASE: laravel
+            MYSQL_USER: root
+            MYSQL_PASSWORD: secret
+            MYSQL_ROOT_PASSWORD: secret
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./mysql-data:/var/lib/mysql
