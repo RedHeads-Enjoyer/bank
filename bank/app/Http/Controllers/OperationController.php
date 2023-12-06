@@ -12,7 +12,10 @@ class OperationController extends Controller
 {
     public function index()
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
@@ -26,18 +29,30 @@ class OperationController extends Controller
 
     public function store(OperaionStoreRequest $request)
     {
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         $validatedData = $request->validated();
-        $validatedData['date'] = now()->format('Y-m-d H:i:s');
-        return Operation::create($validatedData);
+        $account = Account::where("id_account", $validatedData['id_account'])->first();
+
+        if ($account && $account->id_user == $user->id_user) {
+            $validatedData['date'] = now()->format('Y-m-d H:i:s');
+            return Operation::create($validatedData);
+        }
+
+        return response()->json(['data' => "You dont have permissions"], 403);
     }
 
     public function show(string $id)
     {
-        $operation = Operation::where("id_operation", $id)->first();
-        $account = Account::where($operation->id_accaunt, $id)->first();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
 
-        $user = JWTAuth::parseToken()->authenticate();
-        if ($user->role != 1 && $account->id_user != $user->id_user) {
+        $operation = Operation::where("id_operation", $id)->first();
+
+        if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
 
@@ -49,7 +64,10 @@ class OperationController extends Controller
 
     public function update(OperaionStoreRequest $request, string $id)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
@@ -64,7 +82,10 @@ class OperationController extends Controller
 
     public function destroy(string $id)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
