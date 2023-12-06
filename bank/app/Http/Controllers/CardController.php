@@ -12,16 +12,19 @@ class CardController extends Controller
 {
     public function index()
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
 
         $card = CardResource::collection(Card::all());
-        if ($card->count() > 0)
+        if ($card->count() > 0) {
             return $card;
-        else
-            return response()->json(['data' => "No cards"], 404);
+        }
+        return response()->json(['data' => "No cards"], 404);
     }
 
     public function store(CardStoreRequest $request)
@@ -31,10 +34,17 @@ class CardController extends Controller
 
     public function show(string $id)
     {
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
+        if ($id == 'my') {
+            $card = Card::where("id_card", $id)->first();
+        }
+
         $card = Card::where("id_card", $id)->first();
         $account = Account::where($card->id_accaunt, $id)->first();
 
-        $user = JWTAuth::parseToken()->authenticate();
         if ($user->role != 1 && $account->id_user != $user->id_user) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
@@ -47,10 +57,13 @@ class CardController extends Controller
 
     public function update(CardStoreRequest $request, string $id)
     {
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         $card = Card::where("id_card", $id)->first();
         $account = Account::where($card->id_accaunt, $id)->first();
 
-        $user = JWTAuth::parseToken()->authenticate();
         if ($user->role != 1 && $account->id_user != $user->id_user) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
