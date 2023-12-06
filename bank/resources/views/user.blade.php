@@ -8,7 +8,9 @@
 </head>
 <body>
 <main>
-    {{ $first_name }}
+    <p>Здравствуйте, {{ $first_name }} {{ $last_name }}!</p>
+    {{$accounts}}
+
 </main>
 </body>
 </html>

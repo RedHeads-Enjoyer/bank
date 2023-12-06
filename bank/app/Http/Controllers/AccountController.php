@@ -31,10 +31,16 @@ class AccountController extends Controller
 
     public function show(string $id)
     {
+        if ($id == 'my') {
+            $user = JWTAuth::parseToken()->authenticate();
+            $account = Account::where("id_user", $user->id_user)->get();
+            return $account;
+        }
+
         $account = Account::where("id_account", $id)->first();
 
         $user = JWTAuth::parseToken()->authenticate();
-        if ($user->role != 1 && $account->id_user != $user->id_user) {
+        if ($account && $user->role != 1 && $account->id_user != $user->id_user) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
 
@@ -42,6 +48,7 @@ class AccountController extends Controller
             return response()->json(['data' => "No such account"], 404);
         }
         return AccountResource::make($account);
+//        }
     }
 
     public function update(AccountStoreRequest $request, string $id)

@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\API\AuthController;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Dotenv\Parser\Parser;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Tymon\JWTAuth\Contracts\Providers\JWT;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
@@ -37,8 +34,23 @@ class UserController extends Controller
 
     public function show(string $id)
     {
-        $current_user = JWTAuth::parseToken()->authenticate();
-        if (($current_user->role != 1 && $current_user->id_user != intval($id))) {
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
+        if ($id == 'me') {
+            return response()->json(['data' => $user], 200);
+        }
+
+        if ($id == 'cookies') {
+            return response()->json(['data' => [
+                'token' => $_COOKIE['token'],
+                'login time' => $_COOKIE['login_time'],
+                'ip' => $_COOKIE['ip']
+            ]], 200);
+        }
+
+        if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
 
@@ -52,7 +64,10 @@ class UserController extends Controller
 
     public function update(UserStoreRequest $request, string $id)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->id_user != $id && $user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
@@ -67,7 +82,10 @@ class UserController extends Controller
 
     public function destroy(string $id)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
@@ -82,16 +100,5 @@ class UserController extends Controller
 
     public function me() {
         return JWTAuth::parseToken()->authenticate();
-    }
-
-
-
-    public function user(Request $request) {
-        $token = $_COOKIE['token'];
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-            'Accept' => 'application/json',
-        ])->get('/me');
-        return ['login'];
     }
 }
