@@ -37,6 +37,11 @@ class OperationController extends Controller
         $account = Account::where("id_account", $validatedData['id_account'])->first();
 
         if ($account && $account->id_user == $user->id_user) {
+            $delta = -1 * intval($validatedData['delta']);
+            if ($account->balance - $delta < 0) {
+                return response()->json(['data' => "You dont have enough money"], 403);
+            }
+            Account::where("id_account", $validatedData['id_account'])->update(['balance' =>  $account->balance - $delta]);
             $validatedData['date'] = now()->format('Y-m-d H:i:s');
             return Operation::create($validatedData);
         }
