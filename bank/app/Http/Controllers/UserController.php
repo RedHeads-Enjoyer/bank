@@ -38,18 +38,6 @@ class UserController extends Controller
         if ($user->status() != 200) return $user;
         $user = $user->getData();
 
-        if ($id == 'me') {
-            return response()->json(['data' => $user], 200);
-        }
-
-        if ($id == 'cookies') {
-            return response()->json(['data' => [
-                'token' => $_COOKIE['token'],
-                'login time' => $_COOKIE['login_time'],
-                'ip' => $_COOKIE['ip']
-            ]], 200);
-        }
-
         if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
@@ -99,6 +87,17 @@ class UserController extends Controller
     }
 
     public function me() {
-        return JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+        return response()->json(['data' => $user], 200);
+    }
+
+    public function cookies() {
+        return response()->json(['data' => [
+            'token' => $_COOKIE['token'],
+            'login time' => $_COOKIE['login_time'],
+            'ip' => $_COOKIE['ip']
+        ]], 200);
     }
 }

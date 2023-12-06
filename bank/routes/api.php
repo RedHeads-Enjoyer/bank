@@ -21,11 +21,21 @@ use App\Http\Controllers\API\AuthController;
 
 
 Route::group(['namespace' => 'App\Http\Controllers'], function (){
-    Route::apiResource('users', UserController::class);
+  //  Route::apiResource('users', UserController::class);
     Route::apiResource('cards', CardController::class);
     Route::apiResource('operations', OperationController::class);
     Route::apiResource('currency', CurrencyController::class);
     Route::apiResource('accounts', AccountController::class);
+});
+
+Route::prefix('users')->controller(UserController::class)->group(function () {
+    Route::get('me', 'me');
+    Route::get('cookies', 'cookies');
+    Route::get('', 'index');
+    Route::get('{id}', 'show');
+    Route::post('', 'store');
+    Route::put('{id}', 'update');
+    Route::delete('{id}', 'destroy');
 });
 
 Route::prefix('auth')->middleware('api')->controller(AuthController::class)->group(function () {
