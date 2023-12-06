@@ -38,14 +38,8 @@ class CardController extends Controller
         if ($user->status() != 200) return $user;
         $user = $user->getData();
 
-        if ($id == 'my') {
-            $cards = Card::join('accounts', 'accounts.id_account', '=', 'cards.id_account')
-                ->where('accounts.id_user', $user->id_user)->select('cards.id_card', 'cards.number', 'cards.cvc')->get();
-            return response()->json(['data' => $cards], 200);
-        }
-
         $card = Card::where("id_card", $id)->first();
-        $account = Account::where($card->id_accaunt, $id)->first();
+        $account = Account::where('id_account', $card->id_account)->first();
 
         if ($user->role != 1 && $account->id_user != $user->id_user) {
             return response()->json(['data' => "You dont have permissions"], 403);
@@ -82,7 +76,10 @@ class CardController extends Controller
         $card = Card::where("id_card", $id)->first();
         $account = Account::where($card->id_accaunt, $id)->first();
 
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->role != 1 && $account->id_user != $user->id_user) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
@@ -92,5 +89,15 @@ class CardController extends Controller
             return response()->json(['data' => "Card successfully deleted"], 204);
         }
         return response()->json(['data' => "No such card"], 404);
+    }
+
+    public function my() {
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
+        $cards = Card::join('accounts', 'accounts.id_account', '=', 'cards.id_account')
+            ->where('accounts.id_user', $user->id_user)->select('cards.id_card', 'cards.number', 'cards.cvc')->get();
+        return response()->json(['data' => $cards], 200);
     }
 }
