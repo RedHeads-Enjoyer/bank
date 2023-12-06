@@ -39,7 +39,9 @@ class CardController extends Controller
         $user = $user->getData();
 
         if ($id == 'my') {
-            $card = Card::where("id_card", $id)->first();
+            $cards = Card::join('accounts', 'accounts.id_account', '=', 'cards.id_account')
+                ->where('accounts.id_user', $user->id_user)->select('cards.id_card', 'cards.number', 'cards.cvc')->get();
+            return response()->json(['data' => $cards], 200);
         }
 
         $card = Card::where("id_card", $id)->first();
