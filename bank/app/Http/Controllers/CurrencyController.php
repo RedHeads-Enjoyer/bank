@@ -12,10 +12,8 @@ class CurrencyController extends Controller
 {
     public function index()
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        if ($user->role != 1) {
-            return response()->json(['data' => "You dont have permissions"], 403);
-        }
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
 
         $currency = CurrencyResource::collection(Currency::all());
         if ($currency->count() > 0)
@@ -26,7 +24,10 @@ class CurrencyController extends Controller
 
     public function store(CurrencyStoreRequest $request)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
@@ -45,10 +46,14 @@ class CurrencyController extends Controller
 
     public function update(CurrencyStoreRequest $request, string $id)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
+
         $currency = Currency::where("id_currency", $id)->first();
         if ($currency) {
             $currency->update($request->validated());
@@ -59,7 +64,10 @@ class CurrencyController extends Controller
 
     public function destroy(string $id)
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
         if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }

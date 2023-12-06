@@ -38,11 +38,6 @@ class AccountController extends Controller
         if ($user->status() != 200) return $user;
         $user = $user->getData();
 
-        if ($id == 'my') {
-            $account = Account::where("id_user", $user->id_user)->get();
-            return $account;
-        }
-
         $account = Account::where("id_account", $id)->first();
         if ($account && $user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
@@ -90,5 +85,14 @@ class AccountController extends Controller
             return response()->json(['data' => "Account successfully deleted"], 200);
         }
         return response()->json(['data' => "No such account"], 404);
+    }
+
+    public function my() {
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
+        $account = Account::where("id_user", $user->id_user)->get();
+        return response()->json(['data' => $account], 200);
     }
 }

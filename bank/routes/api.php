@@ -20,10 +20,6 @@ use App\Http\Controllers\API\AuthController;
 */
 
 
-Route::group(['namespace' => 'App\Http\Controllers'], function (){
-    Route::apiResource('currency', CurrencyController::class);
-    Route::apiResource('accounts', AccountController::class);
-});
 
 Route::prefix('users')->controller(UserController::class)->group(function () {
     Route::get('me', 'me');
@@ -46,6 +42,23 @@ Route::prefix('cards')->controller(CardController::class)->group(function () {
 
 Route::prefix('operations')->controller(OperationController::class)->group(function () {
     Route::get('my', 'my');
+    Route::get('', 'index');
+    Route::get('{id}', 'show');
+    Route::post('', 'store');
+    Route::put('{id}', 'update');
+    Route::delete('{id}', 'destroy');
+});
+
+Route::prefix('accounts')->controller(AccountController::class)->group(function () {
+    Route::get('my', 'my');
+    Route::get('', 'index');
+    Route::get('{id}', 'show');
+    Route::post('', 'store');
+    Route::put('{id}', 'update');
+    Route::delete('{id}', 'destroy');
+});
+
+Route::prefix('currencies')->controller(CurrencyController::class)->group(function () {
     Route::get('', 'index');
     Route::get('{id}', 'show');
     Route::post('', 'store');

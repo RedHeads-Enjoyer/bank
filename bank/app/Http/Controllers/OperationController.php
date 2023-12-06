@@ -102,4 +102,14 @@ class OperationController extends Controller
         }
         return response()->json(['data' => "No such operation"], 404);
     }
+
+    public function my() {
+        $user = (new GetAuthUser())->authenticateUser();
+        if ($user->status() != 200) return $user;
+        $user = $user->getData();
+
+        $cards = Operation::join('accounts', 'accounts.id_account', '=', 'operations.id_account')
+            ->where('accounts.id_user', $user->id_user)->select('operations.id_operation', 'operations.delta', 'operations.date', 'operations.id_account')->get();
+        return response()->json(['data' => $cards], 200);
+    }
 }
