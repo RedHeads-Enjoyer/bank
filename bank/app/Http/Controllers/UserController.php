@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\API\AuthController;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Dotenv\Parser\Parser;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Tymon\JWTAuth\Contracts\Providers\JWT;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
@@ -72,5 +78,20 @@ class UserController extends Controller
             return response()->json(['data' => "User successfully deleted"], 200);
         }
         return response()->json(['data' => "No such user"], 404);
+    }
+
+    public function me() {
+        return JWTAuth::parseToken()->authenticate();
+    }
+
+
+
+    public function user(Request $request) {
+        $token = $_COOKIE['token'];
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->get('/me');
+        return ['login'];
     }
 }

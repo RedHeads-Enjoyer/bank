@@ -9,7 +9,7 @@
 <body>
     <main>
         <div class="form__wrapper">
-            <form action="{{url('user')}}" method="post">
+            <form action="{{url('api/auth/login')}}" method="post">
                 <h3>Вход</h3>
                 <label>Email <input type="email" name="email"></label>
                 <br>
