@@ -15,9 +15,9 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'users';
-    public $timestamps = false;
-    protected $primaryKey = "id_user";
+    protected $table = 'users'; // Название таблица
+    public $timestamps = false; // Создание полей "когда обновлено/создано"
+    protected $primaryKey = "id_user"; // Указание первичного ключа
 
     protected $fillable = [
         'id_user',
