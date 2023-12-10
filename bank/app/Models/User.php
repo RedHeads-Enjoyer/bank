@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -19,6 +16,7 @@ class User extends Authenticatable implements JWTSubject
     public $timestamps = false; // Создание полей "когда обновлено/создано"
     protected $primaryKey = "id_user"; // Указание первичного ключа
 
+    // Перечесление полей
     protected $fillable = [
         'id_user',
         'first_name',
@@ -30,15 +28,18 @@ class User extends Authenticatable implements JWTSubject
         'password'
     ];
 
+    // Опция хеширования пароля
     protected $casts = [
         'password' => 'hashed'
     ];
 
+    // Получения токена
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
+    // Поля, записынные в токен
     public function getJWTCustomClaims()
     {
         return [

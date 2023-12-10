@@ -8,7 +8,19 @@ use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\API\AuthController;
 
+// Роутер авторизации
+Route::prefix('auth')->middleware('api')->controller(AuthController::class)->group(function () {
+    // Вход
+    Route::post('login', 'login');
+    // Получение пользователя
+    Route::get('user', 'user');
+    // Выход
+    Route::post('logout', 'logout');
+    // Обновление токена
+    Route::post('refresh', 'refresh');
+});
 
+// Роутер пользоватеоя
 Route::prefix('users')->controller(UserController::class)->group(function () {
     // Вывод информации о себе
     Route::get('me', 'me');
@@ -26,6 +38,9 @@ Route::prefix('users')->controller(UserController::class)->group(function () {
     Route::delete('{id}', 'destroy');
 });
 
+// <== ВСЕ ОСТАЛЬНЫЕ РОУТЕРЫ, ПОДОБНЫЕ РОУТЕРУ ПОЛЬЗОВАТЕЛЯ ==>
+
+// Роутер карт
 Route::prefix('cards')->controller(CardController::class)->group(function () {
     Route::get('my', 'my');
     Route::get('', 'index');
@@ -35,6 +50,7 @@ Route::prefix('cards')->controller(CardController::class)->group(function () {
     Route::delete('{id}', 'destroy');
 });
 
+// Роутер операций
 Route::prefix('operations')->controller(OperationController::class)->group(function () {
     Route::get('my', 'my');
     Route::get('', 'index');
@@ -44,6 +60,7 @@ Route::prefix('operations')->controller(OperationController::class)->group(funct
     Route::delete('{id}', 'destroy');
 });
 
+// Роутер счетов
 Route::prefix('accounts')->controller(AccountController::class)->group(function () {
     Route::get('my', 'my');
     Route::get('', 'index');
@@ -53,6 +70,7 @@ Route::prefix('accounts')->controller(AccountController::class)->group(function 
     Route::delete('{id}', 'destroy');
 });
 
+// Роутер валют
 Route::prefix('currencies')->controller(CurrencyController::class)->group(function () {
     Route::get('', 'index');
     Route::get('{id}', 'show');
@@ -61,10 +79,15 @@ Route::prefix('currencies')->controller(CurrencyController::class)->group(functi
     Route::delete('{id}', 'destroy');
 });
 
+// Роутер авторизации
 Route::prefix('auth')->middleware('api')->controller(AuthController::class)->group(function () {
+    // Вход
     Route::post('login', 'login');
+    // Получение пользователя
     Route::get('user', 'user');
+    // Выход
     Route::post('logout', 'logout');
+    // Обновление токена
     Route::post('refresh', 'refresh');
 });
 

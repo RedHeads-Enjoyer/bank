@@ -41,7 +41,7 @@ class CardController extends Controller
         $card = Card::where("id_card", $id)->first();
         $account = Account::where('id_account', $card->id_account)->first();
 
-        if ($user->role != 1 && $account->id_user != $user->id_user) {
+        if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
 
@@ -60,7 +60,7 @@ class CardController extends Controller
         $card = Card::where("id_card", $id)->first();
         $account = Account::where($card->id_accaunt, $id)->first();
 
-        if ($user->role != 1 && $account->id_user != $user->id_user) {
+        if ($user->role != 1) {
             return response()->json(['data' => "You dont have permissions"], 403);
         }
 
