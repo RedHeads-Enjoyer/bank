@@ -8,19 +8,13 @@ use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\API\AuthController;
 
-// Роутер авторизации
 Route::prefix('auth')->middleware('api')->controller(AuthController::class)->group(function () {
-    // Вход
     Route::post('login', 'login');
-    // Получение пользователя
     Route::get('user', 'user');
-    // Выход
     Route::post('logout', 'logout');
-    // Обновление токена
     Route::post('refresh', 'refresh');
 });
 
-// Роутер пользоватеоя
 Route::prefix('users')->controller(UserController::class)->group(function () {
     // Вывод информации о себе
     Route::get('me', 'me');
