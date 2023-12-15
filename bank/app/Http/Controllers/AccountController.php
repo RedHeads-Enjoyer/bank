@@ -134,7 +134,7 @@ class AccountController extends Controller
             'id_account' => $account_to->id_account
         ]);
 
-        return response()->json(['data' => "Operation are complited"], 403);
+        return response()->json(['data' => "Operation are completed"], 403);
     }
 
     // Получение пользователя с переданным токеном
