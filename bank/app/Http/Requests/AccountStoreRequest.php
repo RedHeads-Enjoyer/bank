@@ -17,13 +17,11 @@ class AccountStoreRequest extends FormRequest
     {
         if (request()->isMethod('post')) {
             return [
-                'id_user' => 'exists:users,id_user|required|int',
                 'id_currency' => 'exists:currencies,id_currency|required|int',
                 'balance' => 'required|numeric'
             ];
         } else {
             return [
-                'id_user' => 'exists:users,id_user|nullable|int',
                 'id_currency' => 'exists:currencies,id_currency|nullable|int',
                 'balance' => 'nullable|numeric'
             ];

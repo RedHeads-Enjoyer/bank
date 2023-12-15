@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CurrencyStoreRequest;
 use App\Http\Resources\CurrencyResource;
 use App\Models\Currency;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class CurrencyController extends Controller
 {

@@ -9,95 +9,84 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
-    public function index()
-    {
-        $user = (new GetAuthUser())->authenticateUser();
-        if ($user->status() != 200) return $user;
-        $user = $user->getData();
-
-        if ($user->role != 1) {
-            return response()->json(['data' => "You dont have permissions"], 403);
-        }
-
-        $user = UserResource::collection(User::all());
-        if ($user->count() > 0)
-            return $user;
-        else
-            return response()->json(['data' => "No users"], 404);
+  public function index() {
+    $user = (new GetAuthUser())->authenticateUser();
+    if ($user->status() != 200) return $user;
+    $user = $user->getData();
+    if ($user->role != 1) {
+      return response()->json(['data' => "You dont have permissions"], 403);
     }
+    $user = UserResource::collection(User::all());
+    return response()->json(['data' => $user], 404);
+  }
 
 
-    public function store(UserStoreRequest $request)
-    {
-        return User::create($request->validated());
+  public function store(UserStoreRequest $request)
+  {
+    return User::create($request->validated());
+  }
+
+  public function show(string $id)
+  {
+    $user = (new GetAuthUser())->authenticateUser();
+    if ($user->status() != 200) return $user;
+    $user = $user->getData();
+    if ($user->role != 1) {
+      return response()->json(['data' => "You dont have permissions"], 403);
     }
-
-    public function show(string $id)
-    {
-        $user = (new GetAuthUser())->authenticateUser();
-        if ($user->status() != 200) return $user;
-        $user = $user->getData();
-
-        if ($user->role != 1) {
-            return response()->json(['data' => "You dont have permissions"], 403);
-        }
-
-        $user = User::where("id_user", $id)->first();
-
-        if (!$user) {
-            return response()->json(['data' => "No such user"], 404);
-        }
-        return UserResource::make($user);
+    $user = User::where("id_user", $id)->first();
+    if (!$user) {
+      return response()->json(['data' => "No such user"], 404);
     }
+    return UserResource::make($user);
+  }
 
-    public function update(UserStoreRequest $request, string $id)
-    {
-        $user = (new GetAuthUser())->authenticateUser();
-        if ($user->status() != 200) return $user;
-        $user = $user->getData();
-
-        if ($user->id_user != $id && $user->role != 1) {
-            return response()->json(['data' => "You dont have permissions"], 403);
-        }
-
-        $user = User::where("id_user", $id)->first();
-        if ($user) {
-            $user->update($request->validated());
-            return UserResource::make($user);
-        }
-        return response()->json(['data' => "No such user"], 404);
+  public function update(UserStoreRequest $request, string $id)
+  {
+    $user = (new GetAuthUser())->authenticateUser();
+    if ($user->status() != 200) return $user;
+    $user = $user->getData();
+    if ($user->id_user != $id && $user->role != 1) {
+      return response()->json(['data' => "You dont have permissions"], 403);
     }
-
-    public function destroy(string $id)
-    {
-        $user = (new GetAuthUser())->authenticateUser();
-        if ($user->status() != 200) return $user;
-        $user = $user->getData();
-
-        if ($user->role != 1) {
-            return response()->json(['data' => "You dont have permissions"], 403);
-        }
-
-        $user = User::where("id_user", $id)->first();
-        if ($user) {
-            $user->delete();
-            return response()->json(['data' => "User successfully deleted"], 200);
-        }
-        return response()->json(['data' => "No such user"], 404);
+    $user = User::where("id_user", $id)->first();
+    if ($user) {
+      $user->update($request->validated());
+      return UserResource::make($user);
     }
+    return response()->json(['data' => "No such user"], 404);
+  }
 
-    public function me() {
-        $user = (new GetAuthUser())->authenticateUser();
-        if ($user->status() != 200) return $user;
-        $user = $user->getData();
-        return response()->json(['data' => $user], 200);
+  public function destroy(string $id)
+  {
+    $user = (new GetAuthUser())->authenticateUser();
+    if ($user->status() != 200) return $user;
+    $user = $user->getData();
+    if ($user->role != 1) {
+      return response()->json(['data' => "You dont have permissions"], 403);
     }
+    $user = User::where("id_user", $id)->first();
+    if ($user) {
+      $user->delete();
+      return response()->json(['data' => "User successfully deleted"], 200);
+    }
+    return response()->json(['data' => "No such user"], 404);
+  }
 
-    public function cookies() {
-        return response()->json(['data' => [
-            'token' => $_COOKIE['token'],
-            'login time' => $_COOKIE['login_time'],
-            'ip' => $_COOKIE['ip']
-        ]], 200);
-    }
+  public function me()
+  {
+    $user = (new GetAuthUser())->authenticateUser();
+    if ($user->status() != 200) return $user;
+    $user = $user->getData();
+    return response()->json(['data' => $user], 200);
+  }
+
+  public function cookies()
+  {
+    return response()->json(['data' => [
+      'token' => $_COOKIE['token'],
+      'login time' => $_COOKIE['login_time'],
+      'ip' => $_COOKIE['ip']
+    ]], 200);
+  }
 }
